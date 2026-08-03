@@ -2,96 +2,25 @@ import json
 import csv
 from pathlib import Path
 
-MENU_JSON = Path("../data/menu.json")
-MENU_CSV = Path("../data/menu.csv")
+_PROJECT_ROOT = Path(__file__).resolve().parents[1]
+MENU_JSON = _PROJECT_ROOT / "data" / "menu-data.json"
+MENU_CSV = _PROJECT_ROOT / "data" / "menu-data.csv"
 
 EXTRA_INGREDIENT_PRICE = 1.00
 
-def menu():
-    return {
-        "ingredients": [
-            "tomato sauce",
-            "mozzarella",
-            "gorgonzola",
-            "parmesan",
-            "fontina",
-            "prosciutto cotto",
-            "pepperoni",
-            "mushrooms",
-            "onions",
-            "basil",
-            "pineapple",
-            "olives"
-        ],
-        "pizzas": [
-            {
-                "name": "Margherita",
-                "ingredients": ["tomato sauce", "mozzarella", "basil"],
-                "price": 8.99
-            },
-            {
-                "name": "Prosciutto Cotto",
-                "ingredients": ["tomato sauce", "mozzarella", "prosciutto cotto"],
-                "price": 10.99
-            },
-            {
-                "name": "Quattro Formaggi",
-                "ingredients": ["mozzarella", "gorgonzola", "parmesan", "fontina"],
-                "price": 12.99
-            },
-            {
-                "name": "Pepperoni",
-                "ingredients": ["tomato sauce", "mozzarella", "pepperoni"],
-                "price": 10.99
-            },
-            {
-                "name": "Hawaiian",
-                "ingredients": ["tomato sauce", "mozzarella", "prosciutto cotto", "pineapple"],
-                "price": 11.99
-            },
-            {
-                "name": "Vegetarian",
-                "ingredients": ["tomato sauce", "mozzarella", "mushrooms", "onions", "olives"],
-                "price": 9.99
-            }
-        ],
-        "shop": {
-            "name": "Luna Napoli Pizzeria",
-            "address": "125 Riverstone Ave, Brookfield",
-            "phone": "+1 (555) 210-8899",
-            "email": "hello@lunanapoli.example",
-            "opening_hours": {
-                "mon_thu": "11:00-22:00",
-                "fri_sat": "11:00-23:30",
-                "sun": "12:00-21:00"
-            },
-            "delivery": "25-40 min",
-            "pickup": "15-20 min"
-        }
-    }
-    
+
 def load_menu():
     if not MENU_JSON.exists():
-        MENU_JSON.parent.mkdir(parents=True, exist_ok=True)
-        menu_data = menu()
-        save_menu(menu_data)
-        return menu_data
+        raise RuntimeError(f"Missing menu data file: {MENU_JSON}")
 
     try:
         with open(MENU_JSON, "r", encoding="utf-8") as f:
             menu_data = json.load(f)
-    except (json.JSONDecodeError, OSError):
-        menu_data = menu()
-        save_menu(menu_data)
-        return menu_data
-    
-    if "shop" not in menu_data:
-        menu_data["shop"] = menu()["shop"]
-        save_menu(menu_data)
+    except (json.JSONDecodeError, OSError) as exc:
+        raise RuntimeError(f"Could not load menu data from {MENU_JSON}") from exc
 
     if not isinstance(menu_data, dict) or "ingredients" not in menu_data or "pizzas" not in menu_data:
-        menu_data = menu()
-        save_menu(menu_data)
+        raise RuntimeError(f"Invalid menu data format in {MENU_JSON}")
 
     return menu_data
 

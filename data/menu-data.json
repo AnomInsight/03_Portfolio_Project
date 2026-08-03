@@ -1,0 +1,105 @@
+{
+    "ingredients": [
+        "tomato sauce",
+        "mozzarella",
+        "gorgonzola",
+        "parmesan",
+        "fontina",
+        "prosciutto cotto",
+        "pepperoni",
+        "mushrooms",
+        "onions",
+        "basil",
+        "pineapple",
+        "olives",
+        "artichokes",
+        "black olives",
+        "capers",
+        "garlic oil"
+    ],
+    "pizzas": [
+        {
+            "name": "Margherita",
+            "ingredients": [
+                "tomato sauce",
+                "mozzarella",
+                "basil"
+            ],
+            "price": 8.99
+        },
+        {
+            "name": "Prosciutto Cotto",
+            "ingredients": [
+                "tomato sauce",
+                "mozzarella",
+                "prosciutto cotto"
+            ],
+            "price": 10.99
+        },
+        {
+            "name": "Quattro Formaggi",
+            "ingredients": [
+                "mozzarella",
+                "gorgonzola",
+                "parmesan",
+                "fontina"
+            ],
+            "price": 12.99
+        },
+        {
+            "name": "Pepperoni",
+            "ingredients": [
+                "tomato sauce",
+                "mozzarella",
+                "pepperoni"
+            ],
+            "price": 10.99
+        },
+        {
+            "name": "Hawaiian",
+            "ingredients": [
+                "tomato sauce",
+                "mozzarella",
+                "prosciutto cotto",
+                "pineapple"
+            ],
+            "price": 11.99
+        },
+        {
+            "name": "Vegetarian",
+            "ingredients": [
+                "tomato sauce",
+                "mozzarella",
+                "mushrooms",
+                "onions",
+                "olives"
+            ],
+            "price": 9.99
+        },
+        {
+            "name": "Capricciosa",
+            "ingredients": [
+                "prosciutto cotto",
+                "mushrooms",
+                "artichokes",
+                "black olives",
+                "capers",
+                "garlic oil"
+            ],
+            "price": 11.99
+        }
+    ],
+    "shop": {
+        "name": "Vicolo Pizzeria",
+        "address": "212 Cobblestone Lane, Fairview Heights",
+        "phone": "+1 (123) 456-7890",
+        "email": "hello@vicolopizzeria.example",
+        "opening_hours": {
+            "mon_thu": "11:00-22:00",
+            "fri_sat": "11:00-23:30",
+            "sun": "12:00-21:00"
+        },
+        "delivery": "25-40 min",
+        "pickup": "15-20 min"
+    }
+}

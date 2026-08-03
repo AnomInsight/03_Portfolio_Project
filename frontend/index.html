@@ -1,0 +1,256 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Vicolo Pizzeria</title>
+  <meta name="description" content="Authentic Neapolitan pizza, made with love. Order online from Vicolo Pizzeria in Fairview Heights." />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍕</text></svg>" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,900;1,400&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="site-header" id="site-header">
+    <div class="header-inner">
+      <button class="logo-btn" id="logo-btn">
+        <span class="emoji">🍕</span>
+        <span class="logo-text">Vicolo</span>
+      </button>
+
+      <nav class="main-nav">
+        <button class="nav-link" data-scroll="menu">Menu</button>
+        <button class="nav-link" data-scroll="about">About</button>
+        <button class="nav-link" data-scroll="contact">Contact</button>
+      </nav>
+
+      <button class="cart-btn" id="cart-open-btn">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" /></svg>
+        <span class="cart-btn-label">Your Order</span>
+        <span class="cart-badge" id="cart-badge" hidden>0</span>
+      </button>
+    </div>
+  </header>
+
+  <main>
+    <!-- Hero -->
+    <section class="hero">
+      <div class="hero-glow"></div>
+      <div class="hero-grain"></div>
+      <div class="hero-content">
+        <div class="hero-badge">
+          <span>🌿</span>
+          <span>Authentic Neapolitan Recipes Since 1987</span>
+        </div>
+
+        <h1 class="hero-heading">
+          Crafted with <em>Passion</em><br />&amp; Tradition
+        </h1>
+
+        <p class="hero-sub">
+          Fresh Italian ingredients, wood-fired perfection, and a family recipe
+          passed down through generations. Taste Naples in every bite.
+        </p>
+
+        <div class="hero-ctas">
+          <button class="btn btn-primary btn-lg" data-scroll="menu">View Our Menu</button>
+          <button class="btn btn-outline btn-lg" data-scroll="contact">Find Us</button>
+        </div>
+
+        <div class="hero-stats">
+          <div class="stat">
+            <div class="stat-value">35+</div>
+            <div class="stat-label">Years of craft</div>
+          </div>
+          <div class="stat">
+            <div class="stat-value">6</div>
+            <div class="stat-label">Signature pizzas</div>
+          </div>
+          <div class="stat">
+            <div class="stat-value">200+</div>
+            <div class="stat-label">Happy guests/day</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="hero-scroll-cue">
+        <div class="scroll-cue-pill"><div class="scroll-cue-dot"></div></div>
+      </div>
+    </section>
+
+    <!-- Menu -->
+    <section id="menu" class="menu-section">
+      <div class="container">
+        <div class="section-head">
+          <span class="eyebrow">Our Menu</span>
+          <h2 class="section-title">Wood-Fired Perfection</h2>
+          <p class="section-sub">
+            Every pizza is hand-stretched, topped with the finest Italian ingredients,
+            and baked in our 480&nbsp;°C wood-fired oven.
+          </p>
+        </div>
+
+        <div class="pizza-grid" id="pizza-grid"><!-- pizza cards injected by js --></div>
+
+        <p class="menu-footnote">
+          All pizzas can be customized with extra toppings for <span>$1.00 each</span>.
+        </p>
+        <p class="menu-disclaimer">Images are illustrations only; actual product may vary.</p>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div id="about"></div>
+
+    <div class="container footer-main">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <div class="footer-logo">
+            <span class="emoji">🍕</span>
+            <span class="footer-logo-text" id="footer-shop-name">Vicolo Pizzeria</span>
+          </div>
+          <p class="footer-desc">
+            Founded in 1987, we've been bringing the authentic taste of Naples to Fairview Heights.
+            Every pizza is made with imported Italian ingredients and baked in our traditional
+            wood-fired oven.
+          </p>
+          <div class="footer-pills">
+            <span class="pill">🛵 Delivery: <span id="footer-delivery">25–40 min</span></span>
+            <span class="pill">🏃 Pickup: <span id="footer-pickup">15–20 min</span></span>
+          </div>
+        </div>
+
+        <div class="footer-hours">
+          <h3 class="footer-heading">
+            <svg class="icon icon-amber" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+            Opening Hours
+          </h3>
+          <div class="hours-list">
+            <div class="hours-row"><span>Mon – Thu</span><span id="hours-mon-thu">11:00–22:00</span></div>
+            <div class="hours-row"><span>Fri – Sat</span><span id="hours-fri-sat">11:00–23:30</span></div>
+            <div class="hours-row"><span>Sunday</span><span id="hours-sun">12:00–21:00</span></div>
+          </div>
+        </div>
+
+        <div id="contact" class="footer-contact">
+          <h3 class="footer-heading">Contact Us</h3>
+          <div class="contact-list">
+            <a id="footer-address-link" class="contact-row" href="#" target="_blank" rel="noopener noreferrer">
+              <svg class="icon icon-amber" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+              <span id="footer-address">212 Cobblestone Lane, Fairview Heights</span>
+            </a>
+            <a id="footer-phone-link" class="contact-row" href="#">
+              <svg class="icon icon-amber" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" /></svg>
+              <span id="footer-phone">+1 (123) 456-7890</span>
+            </a>
+            <a id="footer-email-link" class="contact-row" href="#">
+              <svg class="icon icon-amber" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
+              <span id="footer-email">hello@vicolopizzeria.example</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <div class="container footer-bottom-inner">
+        <p class="copyright">© 2026 <span id="footer-shop-name-2">Vicolo Pizzeria</span>. All rights reserved.</p>
+        <p class="crafted">Crafted with ❤️ and 🍕</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Cart sidebar -->
+  <div class="cart-overlay" id="cart-overlay" hidden>
+    <div class="cart-backdrop" id="cart-backdrop"></div>
+    <aside class="cart-panel" id="cart-panel">
+      <div class="cart-header">
+        <div>
+          <h2 class="cart-title">Your Order</h2>
+          <p class="cart-count" id="cart-count" hidden></p>
+        </div>
+        <button class="icon-btn" id="cart-close-btn" aria-label="Close cart">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+        </button>
+      </div>
+
+      <div class="cart-items" id="cart-items"><!-- injected by js --></div>
+
+      <div class="cart-footer" id="cart-footer" hidden>
+        <div class="cart-total-row">
+          <span>Order Total</span>
+          <span class="cart-total" id="cart-total">$0.00</span>
+        </div>
+        <button class="btn btn-primary btn-block" id="cart-order-btn">Place Order via Chat</button>
+        <button class="btn-link" id="cart-clear-btn">Clear all items</button>
+      </div>
+    </aside>
+  </div>
+
+  <!-- Customize modal (populated + shown/hidden by js) -->
+  <div class="modal-overlay" id="customize-overlay" hidden>
+    <div class="modal-backdrop" id="customize-backdrop"></div>
+    <div class="modal-sheet" id="customize-sheet"><!-- injected by js --></div>
+  </div>
+
+  <!-- Chat widget -->
+  <div class="chat-widget">
+    <div class="chat-panel" id="chat-panel" hidden>
+      <div class="chat-panel-header">
+        <div class="chat-panel-title">
+          <div class="chat-avatar">🍕</div>
+          <div>
+            <div class="chat-name">Vicolo AI Assistant</div>
+            <div class="chat-status"><span class="status-dot"></span>Online</div>
+          </div>
+        </div>
+        <div class="chat-panel-actions">
+          <button class="text-btn" id="chat-clear-btn" hidden>Clear</button>
+          <button class="icon-btn icon-btn-dark" id="chat-close-btn" aria-label="Close chat">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="chat-messages" id="chat-messages">
+        <div class="chat-welcome" id="chat-welcome">
+          <span class="wave">👋</span>
+          <p class="welcome-title">Hi! I'm Vicolo's assistant.</p>
+          <p class="welcome-sub">Ask me about our menu, opening hours,<br />or help placing your order!</p>
+          <div class="chat-suggestions">
+            <button class="suggestion-btn" data-suggestion="What's your most popular pizza?">What's your most popular pizza?</button>
+            <button class="suggestion-btn" data-suggestion="How long does delivery take?">How long does delivery take?</button>
+            <button class="suggestion-btn" data-suggestion="Do you have vegetarian options?">Do you have vegetarian options?</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="chat-input-row">
+        <input type="text" id="chat-input" placeholder="Ask anything…" autocomplete="off" />
+        <button class="chat-send-btn" id="chat-send-btn" disabled aria-label="Send message">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" /></svg>
+        </button>
+      </div>
+      <p class="chat-disclaimer">AI responses can be wrong. Double-check anything important.</p>
+    </div>
+
+    <button id="chat-trigger" class="chat-trigger" aria-label="Open chat assistant">
+      <svg class="icon chat-icon-open" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" /></svg>
+      <svg class="icon chat-icon-close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" hidden><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+    </button>
+  </div>
+
+  <script src="js/config.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/cart.js"></script>
+  <script src="js/menu.js"></script>
+  <script src="js/footer.js"></script>
+  <script src="js/chat.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
