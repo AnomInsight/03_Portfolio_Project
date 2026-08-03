@@ -241,7 +241,7 @@ This makes responses more reliable for commerce scenarios where incorrect produc
 
 `frontend/js/config.js` fetches the API key from `GET /client-key` at page load instead of hardcoding it. This does **not** make the key secret — it's still fully visible to any visitor via the browser's Network tab, exactly as if it were hardcoded. The only thing it actually buys: `backend_api_key.txt` becomes the single place the key lives. If that file (and the `BACKEND_API_KEY` env var) is absent, `/client-key` returns an empty key and every protected endpoint (`/chat`, `/order`) responds `500 Server API key is not configured` — there is no hardcoded fallback anywhere in the code that would let the app silently keep working without it.
 
-For convenience, this repository commits a demo `backend_api_key.txt` (a harmless local placeholder, not a paid credential) and sample data files in `data/` so reviewers can run the project quickly without extra setup. `groq_api_key.txt` is the one exception — it's a real third-party credential, so it's git-ignored; use `groq_api_key.example.txt` as the template and supply your own key (see §9).
+For convenience, this repository commits a demo `backend_api_key.txt` (a harmless local placeholder, not a paid credential) and sample data files in `data/` so reviewers can run the project quickly without extra setup. `groq_api_key.txt` is the one exception — it's a real third-party credential, so it's git-ignored; use `groq_api_key.example.txt` as the template and supply your own key (see -> 9. How to Run Locally).
 
 ### How a real production project would do this instead
 
