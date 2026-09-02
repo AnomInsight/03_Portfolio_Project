@@ -37,7 +37,7 @@ The solution is a full-stack chatbot integration blueprint:
 
 - **Frontend widget** embedded into a normal website (HTML/CSS/JS).
 - **Backend API** (FastAPI) that handles chat, order counters, rate limiting, and API-key access.
-- **LLM provider integration** (Groq, llama-3.3-70b-versatile) for natural language responses.
+- **LLM provider integration** (Groq, openai/gpt-oss-20b) for natural language responses.
 - **Menu-aware prompt engineering** to keep answers aligned with actual shop offerings.
 
 ### Core behavior

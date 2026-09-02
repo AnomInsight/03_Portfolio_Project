@@ -219,7 +219,7 @@ def generate_llm_reply(session_id: str, user_text: str) -> str:
     messages.append({"role": "user", "content": user_text})
 
     resp = client.chat.completions.create(
-        model="llama-3.3-70b-versatile",
+        model="openai/gpt-oss-20b",
         messages=messages,
         temperature=0.4,
         max_tokens=300,
