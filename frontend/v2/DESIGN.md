@@ -154,6 +154,26 @@ The abort matters as much as the message: without it the request is still in fli
 reply lands after the visitor has already been told it failed. Retry re-sends with `echo: false`,
 and the backend commits a turn only on success, so neither side can duplicate the message.
 
+## What the assistant says about ordering
+
+The assistant is text-only. It has no tools, and nothing in this frontend reads its replies for
+actions — `Cart.addItem` is reachable only from the customise sheet's own button. Left unstated,
+the model played the "ordering assistant" role well enough to answer *"Your order is set"* and
+offer a checkout that does not exist, which would leave a visitor believing they had ordered.
+
+`SYSTEM_PROMPT` now rules that out server-side, so it applies to both versions. The assistant says
+it cannot place, change or confirm an order, names the control that can, and still prices a pizza
+with extras — the half it can genuinely do. The panel's standing disclaimer stays regardless.
+
+Two design consequences here:
+
+- The replies lean on Markdown emphasis to name controls (**Add to Order**), so `renderRich` in
+  `js/chat.js` is load-bearing, not cosmetic. `.bubble` is `white-space: pre-line`, so the numbered
+  steps the model returns survive as separate lines.
+- The controls it names must keep their names. Renaming "Add to Order" or "Your Order" in this
+  version without updating `SYSTEM_PROMPT` would leave the assistant directing people to a button
+  that is not there.
+
 ## Images
 
 Source PNGs stay in `frontend/images/` — the original version references them and they are the

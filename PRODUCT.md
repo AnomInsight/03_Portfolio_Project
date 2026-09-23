@@ -37,12 +37,19 @@ mechanism a neighbouring "pizza template plus generic chat widget" cannot truthf
 
 - One FastAPI process serves both the JSON API and the static frontend from `frontend/`, so the
   site is opened at `http://127.0.0.1:8000` with no separate dev server and no CORS setup.
+- **Two frontends exist against this one backend**, for side-by-side comparison: the original at
+  `/` (`frontend/`) and Version B at `/v2/` (`frontend/v2/`). Version B is a presentation-layer
+  redesign only — same API contract, same data, same cart model, same handoff. Nothing in the
+  backend is version-specific. Version B's own design record is `frontend/v2/DESIGN.md`.
 - Menu, ingredients and shop details are loaded at runtime from `GET /menu-data` and
   `GET /shop-info`; the page must degrade to a readable error when the backend is not running.
 - Chat posts to `POST /chat` with an `x-api-key` header fetched from `GET /client-key`. The session
   id is persisted in `localStorage` so a conversation survives a reload.
 - `POST /order` increments per-pizza counters in `data/order_counts.json`; those counts feed the
   assistant's popularity answers. It is fire-and-forget — it must never block placing an order.
+- `GET /order-counts` returns those pizzas **ranked**, never with their counts, because the
+  assistant is already forbidden from stating real order numbers and the page must hold the same
+  line. Version B uses it to badge the most-ordered pizza; no orders yet means no badge.
 - The backend rate-limits to 20 requests per 60 seconds per IP.
 
 ## Capabilities and Constraints
@@ -55,6 +62,11 @@ mechanism a neighbouring "pizza template plus generic chat widget" cannot truthf
 - Vanilla HTML/CSS/JS, no build step, no framework, no bundler. Scripts are plain `<script>` tags.
 - The assistant is constrained server-side to the real pizza and ingredient lists and is instructed
   never to state order numbers.
+- **The assistant cannot operate the UI.** It has no tools, and no frontend code reads its replies
+  for actions — `Cart.addItem` is reachable only from the customise panel's own button. It is
+  therefore instructed to say plainly that it cannot place, change or confirm an order, never to
+  imply it has, and to name the control that does it instead. Pricing a pizza with extras stays
+  in scope: that is the half it can actually do.
 
 ## Brand Commitments
 
@@ -67,13 +79,25 @@ mechanism a neighbouring "pizza template plus generic chat widget" cannot truthf
 
 ## Evidence on Hand
 
-- `frontend/images/pizza_*.png` — 7 square, high-quality overhead pizza photographs on a wooden
-  surface. This is the only photography that exists.
+- `frontend/images/pizza_*.png` — 7 square overhead pizza photographs on a wooden surface,
+  1254×1254.
+- `frontend/images/hero_section.png` — 1672×940. A pizzaiolo at the wood-fired oven with the
+  dining room behind him. Supplied by the project owner; Version B's hero.
+- `frontend/images/interior.png` — 1672×940. The dining room, tables set, oven alight at the back
+  with logs stacked beneath. Supplied by the project owner; Version B's story image.
+- `frontend/images/webp/` — responsive WebP variants derived from the PNGs above. Generated
+  artefacts, not new photography; rebuilt with `frontend/v2/tools/build-images.sh`.
 - `data/menu-data.json` — real menu, prices, ingredients, shop hours, address, phone, email.
-- `data/order_counts.json` — genuine (small) order counts used for popularity answers.
+- `data/order_counts.json` — genuine (small) order counts used for popularity answers. Published
+  as a ranking only, never as numbers.
 - **Absent, must not be fabricated:** customer reviews, ratings, star counts, press mentions,
-  awards, named chefs or staff, photographs of the room, the oven or people, delivery-radius maps,
-  allergen or nutrition data, and any specific "X orders today" claim.
+  awards, named chefs or staff, delivery-radius maps, allergen or nutrition data, and any specific
+  "X orders today" claim.
+- **Wanted, not yet supplied — do not invent, crop or generate a substitute:** a portrait or
+  square hero frame at ≥1600px on the short side (the 16:9 source loses ~43% of its width to the
+  near-square desktop hero crop, and pre-cropping it would lower quality rather than raise it),
+  and a tighter craft detail — dough being stretched, the peel, hands at work — landscape at
+  ≥1600×1100, so the hero and the story image stop sharing one visual idea.
 - The hero's "35+ / 6 / 200+" figures in the original are unsourced and the "6" contradicts the 7
   pizzas actually on the menu. Treat them as invented; do not carry them forward unchanged.
 
