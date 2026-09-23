@@ -1,0 +1,120 @@
+/* ==========================================================================
+   Version B — design tokens
+   The only place raw colours, durations and easings are allowed to exist.
+   Ratios noted below are measured against the ground each token is used on.
+   ========================================================================== */
+
+:root {
+  /* --- Ground ----------------------------------------------------------- */
+  /* A printed paper stock, not an off-white. Deep enough to read as the label
+     ground the world is built on and to carry the warm-toned photography. */
+  --paper:        #f4ede0; /* primary ground */
+  --paper-deep:   #eadfcc; /* alternating panel, inset wells */
+  --paper-edge:   #dfd0b6; /* the deepest paper step, for seams and empty media */
+  --ink:          #221a15; /* body text on paper (14.7:1) and the dark ground */
+  --ink-panel:    #2c221c; /* raised surface on the dark ground */
+  --ink-raise:    #3a2e26; /* hover surface on the dark ground */
+
+  /* --- Text ------------------------------------------------------------- */
+  --ink-soft:     #5c4f45; /* secondary on paper        — 6.8:1 */
+  --ink-mute:     #6e5f53; /* tertiary on paper, floor for real copy — 5.3:1 */
+  --ink-faint:    #8a7a6c; /* rules and marks only      — 3.6:1, never text */
+  --paper-dim:    #c9bcae; /* secondary on ink          — 9.2:1 */
+  --paper-faint:  #a08f80; /* tertiary on ink           — 5.5:1 */
+
+  /* --- Accent: exactly one brand hue ------------------------------------ */
+  --tomato:       #b11e23; /* 5.9:1 on paper · white on it 6.8:1 */
+  --tomato-hover: #8e181c;
+  --tomato-press: #721316;
+  --tomato-tint:  #f3e2da; /* selected-extra wash on paper */
+  --tomato-light: #e4585c; /* the accent on the dark ground — 4.8:1 on ink */
+
+  /* --- Semantic status (not brand colour) ------------------------------- */
+  --basil:        #2e5233; /* "open now" on paper — 7.6:1 */
+  --basil-dot:    #6fbf7f; /* "open now" on ink   — 7.7:1 */
+
+  /* --- Rules: load-bearing structure, not trim -------------------------- */
+  --rule:         rgba(34, 26, 21, 0.14);
+  --rule-strong:  rgba(34, 26, 21, 0.26);
+  --rule-faint:   rgba(34, 26, 21, 0.08);
+  --rule-on-ink:  rgba(244, 237, 224, 0.14);
+  --rule-on-ink-strong: rgba(244, 237, 224, 0.26);
+
+  /* --- Type ------------------------------------------------------------- */
+  /* Bodoni: the face of Italian printing and of the food packaging this world
+     is drawn from. Optical sizing is left to the browser so the hairlines
+     thicken at dish-name sizes instead of breaking up. */
+  --font-display: 'Bodoni Moda', 'Didot', 'Bodoni MT', Georgia, serif;
+  --font-label:   'Archivo', 'Helvetica Neue', Arial, sans-serif;
+  --font-text:    'Archivo', system-ui, -apple-system, 'Segoe UI', sans-serif;
+
+  --step--1: 0.8125rem;
+  --step-0:  0.9375rem;
+  --step-1:  1.0625rem;
+  --step-2:  1.25rem;
+  --step-3:  1.5rem;
+  --step-4:  clamp(1.75rem, 1.4rem + 1.5vw, 2.25rem);
+  --step-5:  clamp(2.125rem, 1.6rem + 2.4vw, 3rem);
+  --step-6:  clamp(2.75rem, 1.7rem + 4.6vw, 5.25rem); /* display ceiling 5.25rem */
+
+  --measure: 66ch;
+
+  /* --- Space: 4px base -------------------------------------------------- */
+  --s-1: 0.25rem;
+  --s-2: 0.5rem;
+  --s-3: 0.75rem;
+  --s-4: 1rem;
+  --s-5: 1.5rem;
+  --s-6: 2rem;
+  --s-7: 3rem;
+  --s-8: 4rem;
+  --s-9: 6rem;
+  --s-10: 8rem;
+
+  --gutter: 1.25rem;
+  --shell: 78rem;
+
+  /* --- Radius: printed, not pillowy ------------------------------------- */
+  --r-sm: 3px;
+  --r-md: 6px;
+  --r-lg: 10px;
+  --r-pill: 999px;
+
+  /* --- Depth: every shadow has an offset and a blur ---------------------- */
+  --shadow-card:    0 1px 2px rgba(34, 26, 21, 0.06), 0 8px 24px -14px rgba(34, 26, 21, 0.22);
+  --shadow-lift:    0 2px 6px rgba(34, 26, 21, 0.08), 0 22px 44px -20px rgba(34, 26, 21, 0.3);
+  --shadow-dock:    0 2px 8px rgba(34, 26, 21, 0.1), 0 16px 40px -18px rgba(34, 26, 21, 0.4);
+  --shadow-overlay: 0 8px 20px rgba(34, 26, 21, 0.14), 0 40px 90px -24px rgba(34, 26, 21, 0.48);
+
+  /* --- Motion ----------------------------------------------------------- */
+  --t-feedback: 120ms; /* immediate acknowledgement */
+  --t-routine:  200ms; /* ordinary state change */
+  --t-overlay:  380ms; /* drawer, sheet, panel */
+  --t-focal:    520ms; /* the cart -> assistant handoff */
+
+  --ease-out:  cubic-bezier(0.16, 1, 0.3, 1);   /* confident arrival */
+  --ease-in:   cubic-bezier(0.4, 0, 1, 1);      /* faster departure */
+  --ease-mid:  cubic-bezier(0.32, 0.72, 0, 1);
+
+  /* --- Layers ----------------------------------------------------------- */
+  --z-header: 60;
+  --z-dock: 70;
+  --z-assistant: 75;
+  --z-cart: 80;
+  --z-modal: 90;
+}
+
+@media (min-width: 40rem) { :root { --gutter: 2rem; } }
+@media (min-width: 64rem) { :root { --gutter: 2.5rem; } }
+
+/* Reduced motion collapses every duration to a short cross-fade. Individual
+   rules still drop their transforms; this guarantees nothing lingers even if
+   one is missed. */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --t-feedback: 1ms;
+    --t-routine: 120ms;
+    --t-overlay: 120ms;
+    --t-focal: 120ms;
+  }
+}

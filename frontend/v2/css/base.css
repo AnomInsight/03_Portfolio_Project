@@ -1,0 +1,219 @@
+/* ==========================================================================
+   Version B — reset, typography base, and the browser surfaces we inherit
+   ========================================================================== */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html {
+  scroll-behavior: smooth;
+  /* The fixed masthead would otherwise cover an anchored section's first line. */
+  scroll-padding-top: 5.5rem;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  text-wrap: pretty;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-text);
+  font-size: var(--step-1);
+  line-height: 1.65;
+  /* Deliberately NOT -webkit-font-smoothing: antialiased. Grayscale AA thins
+     strokes, which breaks Bodoni's hairlines at small sizes on standard-density
+     screens. Subpixel rendering keeps them solid. */
+  font-synthesis-weight: none;
+  overflow-x: hidden;
+}
+
+h1, h2, h3, h4, p, figure, blockquote { margin: 0; }
+ul, ol { margin: 0; padding: 0; list-style: none; }
+
+img, svg, video { display: block; max-width: 100%; }
+img { height: auto; }
+/* <picture> is only a source selector; `contents` keeps the <img> itself as the
+   laid-out box so every existing `img` rule still applies unchanged. */
+picture { display: contents; }
+
+button, input, textarea, select {
+  font: inherit;
+  color: inherit;
+  letter-spacing: inherit;
+}
+
+button {
+  margin: 0;
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+a {
+  color: inherit;
+  text-decoration-color: var(--rule-strong);
+  text-underline-offset: 0.2em;
+  text-decoration-thickness: from-font;
+}
+
+/* Elements toggled through the HTML `hidden` attribute set their own display
+   (flex/grid) when shown, which would otherwise beat the UA's
+   `[hidden] { display: none }` and leave them on screen. */
+[hidden] { display: none !important; }
+
+/* --- Type roles ----------------------------------------------------------
+   Two families, three jobs. Nothing outside these classes should pick a face. */
+
+.t-display {
+  font-family: var(--font-display);
+  /* Bodoni's stroke contrast is optical-size dependent; letting the browser
+     drive the opsz axis keeps hairlines solid at dish-name sizes and crisp at
+     display sizes. */
+  font-optical-sizing: auto;
+  font-weight: 600;
+  line-height: 1.14; /* Bodoni has long descenders; tighter than this collides */
+  letter-spacing: -0.012em; /* a didone needs less negative tracking than a sans */
+  /* Headings break into even lines instead of leaving a word stranded. */
+  text-wrap: balance;
+}
+
+/* Everything else that speaks in the display voice - dish names, totals,
+   overlay titles - inherits the same optical-sizing behaviour. */
+.pizza-name, .cart-item-name, .sheet-title, .overlay-title,
+.cart-empty-title, .hero-plate-name, .assistant-intro b,
+.cart-total-row dd, .sheet-total-value, .story-stamp span:last-child {
+  font-family: var(--font-display);
+  font-optical-sizing: auto;
+  /* 700 rather than the display weight of 600: below about 2rem the 600 master's
+     hairlines drop under a physical pixel on a 1x screen and start to break up. */
+  font-weight: 700;
+  /* A didone set small wants loosening, not tightening. */
+  letter-spacing: 0.004em;
+  line-height: 1.2;
+}
+
+.t-label {
+  font-family: var(--font-label);
+  font-variation-settings: 'wdth' 78;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  font-size: var(--step--1);
+  line-height: 1.2;
+}
+
+.t-lede {
+  font-size: var(--step-2);
+  line-height: 1.55;
+  color: var(--ink-soft);
+  max-width: 34ch;
+}
+
+.t-body { max-width: var(--measure); color: var(--ink-soft); }
+
+/* Prices, quantities, clock times and counts must not jitter as they change. */
+.t-num { font-variant-numeric: tabular-nums; }
+
+/* --- Browser surfaces ----------------------------------------------------
+   The parts we did not draw still carry the design. */
+
+::selection { background: var(--tomato); color: #fff; }
+::-moz-selection { background: var(--tomato); color: #fff; }
+
+:root { caret-color: var(--tomato); accent-color: var(--tomato); }
+
+/* Firefox */
+* { scrollbar-width: thin; scrollbar-color: var(--rule-strong) transparent; }
+
+/* WebKit / Blink */
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: var(--rule-strong);
+  border-radius: var(--r-pill);
+  border: 3px solid transparent;
+  background-clip: content-box;
+}
+::-webkit-scrollbar-thumb:hover { background: var(--ink-faint); background-clip: content-box; }
+
+.on-ink { scrollbar-color: var(--rule-on-ink-strong) transparent; }
+.on-ink ::-webkit-scrollbar-thumb { background: var(--rule-on-ink-strong); background-clip: content-box; }
+
+/* --- Focus ---------------------------------------------------------------
+   One visible ring everywhere, in the brand accent, with a contrasting inner
+   halo so it survives on paper, on ink and on top of photography. */
+
+:focus { outline: none; }
+
+:focus-visible {
+  outline: 2px solid var(--tomato);
+  outline-offset: 2px;
+  border-radius: var(--r-sm);
+}
+
+/* Programmatic focus targets (the dialog containers) are not reachable by Tab,
+   so they take focus silently. Every real control keeps its ring. */
+[tabindex='-1']:focus,
+[tabindex='-1']:focus-visible { outline: none; }
+
+.on-ink :focus-visible,
+.focus-on-ink:focus-visible {
+  outline-color: var(--tomato-light);
+  box-shadow: 0 0 0 4px rgba(34, 26, 21, 0.9);
+}
+
+/* --- Utilities ----------------------------------------------------------- */
+
+.shell {
+  width: 100%;
+  max-width: var(--shell);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px; height: 1px;
+  margin: -1px; padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+.skip-link {
+  position: fixed;
+  top: var(--s-3);
+  left: var(--s-3);
+  z-index: 200;
+  background: var(--ink);
+  color: var(--paper);
+  padding: var(--s-3) var(--s-4);
+  border-radius: var(--r-md);
+  transform: translateY(-200%);
+  transition: transform var(--t-routine) var(--ease-out);
+}
+.skip-link:focus-visible { transform: translateY(0); }
+
+/* The icon grid: one size, one stroke weight, everywhere. */
+.ico {
+  width: 1.25rem;
+  height: 1.25rem;
+  flex: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  fill: none;
+}
+.ico-sm { width: 1rem; height: 1rem; }
+.ico-lg { width: 1.5rem; height: 1.5rem; }
+
+/* A hairline that reads as printed rather than as a border. */
+.rule { height: 1px; background: var(--rule); border: 0; }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+}

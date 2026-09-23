@@ -1,0 +1,759 @@
+/* ==========================================================================
+   Version B — page structure
+   Sections are panels separated by rules and ground shifts, never by a hard
+   colour slab meeting another hard colour slab.
+   ========================================================================== */
+
+/* --- Masthead -------------------------------------------------------------
+   Transparent over the hero, then settles onto paper with a rule once the
+   page has moved. The change reports scroll position; it is not decoration. */
+
+.masthead {
+  position: fixed;
+  inset: 0 0 auto;
+  z-index: var(--z-header);
+  background: transparent;
+  border-bottom: 1px solid transparent;
+  transition:
+    background-color var(--t-routine) var(--ease-out),
+    border-color var(--t-routine) var(--ease-out),
+    box-shadow var(--t-routine) var(--ease-out);
+}
+.masthead.is-settled {
+  background: rgba(244, 237, 224, 0.92);
+  backdrop-filter: blur(12px) saturate(1.4);
+  border-bottom-color: var(--rule);
+  box-shadow: 0 1px 2px rgba(34, 26, 21, 0.04), 0 10px 30px -22px rgba(34, 26, 21, 0.5);
+}
+
+.masthead-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-4);
+  height: 4.5rem;
+}
+
+/* Wordmark: letterspaced condensed capitals over a rule, with the category
+   set small beneath. No gradient fill, no emoji. */
+.wordmark {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.1875rem;
+  padding: var(--s-1) var(--s-1) var(--s-1) 0;
+  border-radius: var(--r-sm);
+  transition: opacity var(--t-routine) var(--ease-out);
+}
+.wordmark:hover { opacity: 0.68; }
+.wordmark-name {
+  font-family: var(--font-label);
+  font-variation-settings: 'wdth' 70;
+  font-weight: 700;
+  font-size: 1.375rem;
+  line-height: 0.95;
+  letter-spacing: 0.2em;
+  text-indent: 0.2em;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+.wordmark-sub {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  align-self: stretch;
+  font-family: var(--font-label);
+  font-variation-settings: 'wdth' 78;
+  font-size: 0.6875rem; /* 11px floor for functional text, letterspaced or not */
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-indent: 0.2em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+  white-space: nowrap;
+}
+.wordmark-sub::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--rule-strong);
+}
+
+.masthead-nav {
+  display: none;
+  align-items: center;
+  gap: var(--s-6);
+}
+@media (min-width: 52rem) { .masthead-nav { display: flex; } }
+
+.nav-link {
+  position: relative;
+  padding: var(--s-2) 0;
+  font-family: var(--font-label);
+  font-variation-settings: 'wdth' 82;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  border-radius: var(--r-sm);
+  transition: color var(--t-routine) var(--ease-out);
+}
+/* The underline grows from the left, so it reads as the link being drawn on
+   rather than a box appearing behind it. */
+.nav-link::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: 0.25rem;
+  width: 100%;
+  height: 1px;
+  background: var(--tomato);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--t-routine) var(--ease-out);
+}
+.nav-link:hover { color: var(--tomato); }
+.nav-link:hover::after,
+.nav-link[aria-current='true']::after { transform: scaleX(1); }
+.nav-link[aria-current='true'] { color: var(--ink); }
+
+.masthead-actions { display: flex; align-items: center; gap: var(--s-2); }
+
+.cart-trigger {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-2);
+  padding: 0.625rem 1rem;
+  border: 1px solid var(--rule-strong);
+  border-radius: var(--r-md);
+  background: transparent;
+  font-family: var(--font-label);
+  font-variation-settings: 'wdth' 78;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink);
+  transition:
+    background-color var(--t-routine) var(--ease-out),
+    border-color var(--t-routine) var(--ease-out),
+    color var(--t-routine) var(--ease-out);
+}
+.cart-trigger:hover { border-color: var(--ink); background: var(--paper-deep); }
+/* Filled only once it holds something — the state earns the accent. */
+.cart-trigger.has-items {
+  background: var(--tomato);
+  border-color: var(--tomato);
+  color: #fff;
+}
+.cart-trigger.has-items:hover { background: var(--tomato-hover); border-color: var(--tomato-hover); }
+.cart-trigger-label { display: none; }
+@media (min-width: 30rem) { .cart-trigger-label { display: inline; } }
+
+.cart-count {
+  min-width: 1.25rem;
+  height: 1.25rem;
+  padding: 0 0.25rem;
+  display: grid;
+  place-items: center;
+  border-radius: var(--r-pill);
+  background: var(--ink);
+  color: var(--paper);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0;
+}
+.cart-trigger.has-items .cart-count { background: rgba(34, 26, 21, 0.28); color: #fff; }
+
+.nav-toggle { display: inline-flex; }
+@media (min-width: 52rem) { .nav-toggle { display: none; } }
+
+/* Mobile navigation sheet — the original has no navigation at all below its
+   desktop breakpoint, so this is a route that did not previously exist. */
+.nav-sheet {
+  position: fixed;
+  inset: 4.5rem 0 auto;
+  z-index: calc(var(--z-header) - 1);
+  background: var(--paper);
+  border-bottom: 1px solid var(--rule);
+  box-shadow: var(--shadow-card);
+  padding: var(--s-2) 0 var(--s-5);
+  transform-origin: top center;
+  animation: sheet-drop var(--t-overlay) var(--ease-out) both;
+}
+@keyframes sheet-drop {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: none; }
+}
+.nav-sheet ul { display: flex; flex-direction: column; }
+.nav-sheet li + li { border-top: 1px solid var(--rule-faint); }
+.nav-sheet button {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: var(--s-4) 0;
+  font-family: var(--font-label);
+  font-variation-settings: 'wdth' 82;
+  font-size: var(--step-0);
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+.nav-sheet button:hover { color: var(--tomato); }
+.nav-sheet button .ico { color: var(--ink-faint); }
+
+/* --- Hero -----------------------------------------------------------------
+   Asymmetric: the argument on the left, the food on the right, running off
+   the edge of the page so the crop reads as a photograph rather than a tile. */
+
+.hero {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr;
+  align-items: center;
+  padding-top: 4.5rem;
+  background: var(--paper);
+  border-bottom: 1px solid var(--rule);
+  overflow: hidden;
+}
+@media (min-width: 60rem) {
+  .hero {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 52%);
+    min-height: min(84vh, 46rem);
+  }
+}
+
+.hero-copy {
+  padding: var(--s-8) var(--gutter) var(--s-7);
+  max-width: 44rem;
+  margin-inline: auto;
+  width: 100%;
+}
+@media (min-width: 60rem) {
+  .hero-copy {
+    margin-inline: 0;
+    padding-block: var(--s-8);
+    padding-inline-start: max(var(--gutter), calc((100vw - var(--shell)) / 2 + var(--gutter)));
+    padding-inline-end: var(--s-8);
+  }
+}
+
+.hero-title {
+  /* Sized so the longest line fits the copy column at every breakpoint; the
+     display ceiling is still 5.25rem elsewhere in the system. */
+  font-size: clamp(2.25rem, 0.9rem + 4.2vw, 3.875rem);
+  margin-bottom: var(--s-5);
+  text-wrap: nowrap; /* the breaks are authored, not negotiated */
+}
+.hero-line { display: block; }
+/* The last line carries the specific, local half of the claim. */
+.hero-line.is-place { color: var(--tomato); }
+
+.hero-lede { margin-bottom: var(--s-6); max-width: 38ch; }
+
+.hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-3);
+  margin-bottom: var(--s-7);
+}
+.hero-actions .btn { flex: 1 1 13rem; }
+@media (min-width: 30rem) { .hero-actions .btn { flex: 0 0 auto; } }
+
+/* Real operational facts, bound to /shop-info — not invented achievement
+   numbers. A hungry local needs these before anything else. */
+.hero-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--s-2) var(--s-4);
+  padding-top: var(--s-4);
+  border-top: 1px solid var(--rule);
+  font-size: var(--step--1);
+  color: var(--ink-soft);
+}
+.hero-meta-item { display: inline-flex; align-items: center; gap: 0.4375rem; white-space: nowrap; }
+.hero-meta-item .ico { width: 0.9375rem; height: 0.9375rem; color: var(--ink-faint); }
+.hero-meta-item b { font-weight: 600; color: var(--ink); }
+.hero-meta-sep { width: 1px; height: 0.875rem; background: var(--rule-strong); }
+@media (max-width: 30rem) { .hero-meta-sep { display: none; } }
+
+.hero-figure {
+  position: relative;
+  margin: 0;
+  background: var(--paper-edge);
+  aspect-ratio: 4 / 3;
+}
+@media (min-width: 60rem) {
+  .hero-figure { aspect-ratio: auto; align-self: stretch; min-height: 100%; }
+}
+/* Framed on the peel, the pizza and the oven mouth, keeping the pizzaiolo and
+   some of the room in shot. */
+.hero-figure img { width: 100%; height: 100%; object-fit: cover; object-position: 70% 50%; }
+@media (max-width: 59.99rem) {
+  .hero-figure img { object-position: 64% 50%; }
+}
+
+/* A soft paper edge where the photograph meets the copy column, so the two
+   grounds join instead of butting. */
+.hero-figure::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(90deg, var(--paper) 0%, rgba(244, 237, 224, 0) 22%);
+}
+@media (max-width: 59.99rem) {
+  .hero-figure::before { background: linear-gradient(180deg, var(--paper) 0%, rgba(244, 237, 224, 0) 18%); }
+}
+
+/* The label plate: the one place the world's tin-label grammar is literal. */
+.hero-plate {
+  position: absolute;
+  left: var(--s-5);
+  bottom: var(--s-5);
+  display: flex;
+  align-items: center;
+  gap: var(--s-4);
+  padding: 0.75rem 1rem;
+  background: rgba(244, 237, 224, 0.94);
+  backdrop-filter: blur(8px);
+  border: 1px solid var(--rule);
+  border-radius: var(--r-md);
+  box-shadow: var(--shadow-card);
+  text-align: left;
+}
+.hero-plate-name { font-family: var(--font-display); font-weight: 600; font-size: var(--step-1); line-height: 1.1; }
+.hero-plate-note { font-size: 0.6875rem; color: var(--ink-mute); text-transform: uppercase; letter-spacing: 0.12em; }
+.hero-plate-price {
+  font-family: var(--font-label);
+  font-variation-settings: 'wdth' 78;
+  font-weight: 700;
+  font-size: var(--step-2);
+  color: var(--tomato);
+  padding-left: var(--s-4);
+  border-left: 1px solid var(--rule);
+}
+
+/* --- Section furniture ----------------------------------------------------- */
+
+.section { padding-block: var(--s-9); }
+@media (min-width: 64rem) { .section { padding-block: var(--s-10); } }
+
+.section-head { max-width: 46rem; margin-bottom: var(--s-8); }
+.section-head.is-centred { margin-inline: auto; text-align: center; }
+.section-head.is-centred .t-body { margin-inline: auto; }
+.section-title { font-size: var(--step-5); margin-bottom: var(--s-4); }
+
+/* --- Story ---------------------------------------------------------------- */
+
+.story { background: var(--paper-deep); border-bottom: 1px solid var(--rule); }
+.story-grid {
+  display: grid;
+  gap: var(--s-7);
+  grid-template-columns: 1fr;
+  align-items: center;
+}
+@media (min-width: 60rem) {
+  .story-grid {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: var(--s-9);
+    align-items: stretch;
+  }
+}
+
+.story-figure {
+  position: relative;
+  margin: 0;
+  border: 1px solid var(--rule);
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  background: var(--paper-edge);
+  aspect-ratio: 3 / 2;
+  box-shadow: var(--shadow-card);
+}
+.story-figure img { width: 100%; height: 100%; object-fit: cover; }
+
+/* On two columns the photograph matches the height of the text beside it
+   instead of floating in a half-empty column. Declared after the base rule so
+   `aspect-ratio: auto` actually wins, otherwise the fixed ratio drives the
+   width from the stretched height and the figure overflows its column. */
+@media (min-width: 60rem) {
+  .story-figure { aspect-ratio: auto; height: 100%; min-height: 24rem; }
+}
+
+/* Est. plate, printed into the corner of the photograph. */
+.story-stamp {
+  position: absolute;
+  right: var(--s-4);
+  top: var(--s-4);
+  display: grid;
+  place-items: center;
+  gap: 0.125rem;
+  width: 5.25rem;
+  height: 5.25rem;
+  border: 1px solid rgba(244, 237, 224, 0.65);
+  border-radius: var(--r-pill);
+  background: rgba(34, 26, 21, 0.55);
+  backdrop-filter: blur(6px);
+  color: var(--paper);
+  text-align: center;
+}
+.story-stamp span:first-child { font-size: 0.6875rem; letter-spacing: 0.18em; text-indent: 0.18em; text-transform: uppercase; opacity: 0.88; }
+.story-stamp span:last-child { font-family: var(--font-display); font-size: 1.375rem; font-weight: 600; line-height: 1; }
+
+.story-title { font-size: var(--step-4); margin-bottom: var(--s-4); }
+.story-copy { margin-bottom: var(--s-6); }
+
+/* The craft points are a ruled spec block, in the grammar of a label's small
+   print — deliberately not three identical icon cards. */
+.spec { border-top: 1px solid var(--rule-strong); }
+.spec li {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: baseline;
+  gap: var(--s-3) var(--s-4);
+  padding: var(--s-4) 0;
+  border-bottom: 1px solid var(--rule);
+}
+.spec .ico {
+  grid-row: span 2;
+  align-self: start;
+  margin-top: 0.1rem; /* optically aligned to the term, not floating between rows */
+  color: var(--tomato);
+}
+.spec-term {
+  font-family: var(--font-label);
+  font-variation-settings: 'wdth' 82;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+.spec-def { grid-column: 2; font-size: var(--step-0); color: var(--ink-soft); margin-top: 0.125rem; }
+
+.story-aside {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+  margin-top: var(--s-6);
+  font-size: var(--step-0);
+  color: var(--ink-soft);
+}
+
+/* --- Menu -----------------------------------------------------------------
+   Same concept as the original: photo-led cards, price beside the name,
+   ingredient tags, one action per card. Re-set in this world's materials. */
+
+.menu { background: var(--paper); }
+
+.menu-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--s-5);
+}
+@media (min-width: 40rem) { .menu-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (min-width: 64rem) { .menu-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--s-6); } }
+
+.pizza-card {
+  display: flex;
+  flex-direction: column;
+  background: var(--paper);
+  border: 1px solid var(--rule);
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-card);
+  transition:
+    transform var(--t-routine) var(--ease-out),
+    box-shadow var(--t-routine) var(--ease-out),
+    border-color var(--t-routine) var(--ease-out);
+}
+.pizza-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-lift);
+  border-color: var(--rule-strong);
+}
+/* Keyboard parity: tabbing to the card's action lifts the card too. */
+.pizza-card:focus-within {
+  border-color: var(--rule-strong);
+  box-shadow: var(--shadow-lift);
+}
+
+.pizza-media {
+  position: relative;
+  aspect-ratio: 4 / 3; /* locked, so the photograph is cropped and never stretched */
+  overflow: hidden;
+  background: var(--paper-edge);
+  border-bottom: 1px solid var(--rule);
+}
+.pizza-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform var(--t-focal) var(--ease-out);
+}
+.pizza-card:hover .pizza-media img { transform: scale(1.04); }
+
+.pizza-fallback {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+  color: var(--ink-faint);
+  background: var(--paper-edge);
+}
+.pizza-fallback .ico { width: 2.5rem; height: 2.5rem; }
+
+.pizza-body {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  padding: var(--s-5);
+  gap: var(--s-4);
+}
+
+/* Name and price joined by a dotted leader — the printed-menu device, and the
+   fastest way to read "this dish costs this much". */
+.pizza-head {
+  display: flex;
+  align-items: baseline;
+  gap: var(--s-3);
+}
+.pizza-name { font-size: 1.3125rem; }
+.pizza-leader {
+  flex: 1;
+  height: 0.6em;
+  border-bottom: 1px dotted var(--rule-strong);
+  min-width: var(--s-4);
+}
+.pizza-price {
+  font-family: var(--font-label);
+  font-variation-settings: 'wdth' 78;
+  font-weight: 700;
+  font-size: var(--step-2);
+  color: var(--tomato);
+  white-space: nowrap;
+}
+
+.pizza-tags { display: flex; flex-wrap: wrap; gap: 0.375rem; }
+.pizza-card .btn { margin-top: auto; }
+
+/* The house classic, full width at every breakpoint, which also makes seven
+   cards fill a two- or three-column grid exactly instead of orphaning one. */
+.pizza-card.is-feature { grid-column: 1 / -1; }
+@media (min-width: 48rem) {
+  .pizza-card.is-feature { flex-direction: row; align-items: stretch; }
+  .pizza-card.is-feature .pizza-media {
+    flex: 0 0 46%;
+    /* Bounded, otherwise the row takes the photograph's own square height and
+       leaves the text column half empty. */
+    aspect-ratio: 16 / 10;
+    border-bottom: 0;
+    border-right: 1px solid var(--rule);
+  }
+  .pizza-card.is-feature .pizza-body {
+    justify-content: center;
+    padding: var(--s-7);
+    gap: var(--s-4);
+  }
+  /* The name/price line runs the full width of the card so the leader reaches
+     the price, the way a printed menu sets it. The prose beside it does not. */
+  .pizza-card.is-feature .t-body,
+  .pizza-card.is-feature .pizza-tags { max-width: 34rem; }
+  .pizza-card.is-feature .pizza-name { font-size: var(--step-4); }
+  .pizza-card.is-feature .pizza-price { font-size: var(--step-3); }
+  .pizza-card.is-feature .btn { margin-top: var(--s-2); align-self: flex-start; padding-inline: var(--s-6); }
+}
+
+.pizza-flag {
+  position: absolute;
+  left: var(--s-3);
+  top: var(--s-3);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.375rem 0.6875rem;
+  border-radius: var(--r-pill);
+  background: rgba(244, 237, 224, 0.94);
+  backdrop-filter: blur(6px);
+  border: 1px solid var(--rule);
+  font-family: var(--font-label);
+  font-variation-settings: 'wdth' 82;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+.pizza-flag .ico { width: 0.8125rem; height: 0.8125rem; color: var(--tomato); }
+
+/* "Most ordered" is measured, not editorial, so it takes the accent while
+   "House classic" stays quiet. Its ground is opaque, so the blur the
+   translucent variant needs would only cost a composite layer for nothing. */
+.pizza-flag.is-popular {
+  background: var(--tomato);
+  border-color: var(--tomato);
+  color: var(--paper);
+  backdrop-filter: none;
+}
+
+.pizza-flag.is-popular .ico { color: currentColor; }
+
+.menu-note {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-3);
+  margin-top: var(--s-7);
+  padding-top: var(--s-4);
+  border-top: 1px solid var(--rule);
+  font-size: var(--step--1);
+  color: var(--ink-mute);
+}
+.menu-note b { color: var(--ink); font-weight: 600; }
+
+.menu-status { grid-column: 1 / -1; }
+
+/* Skeletons while the menu request is in flight — the page keeps its shape
+   instead of collapsing to a line of text. */
+.pizza-skeleton {
+  border: 1px solid var(--rule);
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  background: var(--paper);
+}
+.pizza-skeleton .sk-media { aspect-ratio: 4 / 3; background: var(--paper-deep); }
+.pizza-skeleton .sk-body { padding: var(--s-5); display: grid; gap: var(--s-3); }
+.pizza-skeleton .sk-line { height: 0.75rem; border-radius: var(--r-sm); background: var(--paper-deep); }
+.pizza-skeleton .sk-line.is-short { width: 45%; }
+.pizza-skeleton .sk-line.is-btn { height: 2.5rem; border-radius: var(--r-md); margin-top: var(--s-2); }
+.pizza-skeleton [class^='sk-'] { animation: sk-pulse 1.4s var(--ease-mid) infinite; }
+@keyframes sk-pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.55; } }
+
+/* --- Footer ---------------------------------------------------------------- */
+
+.site-footer {
+  background: var(--ink);
+  color: var(--paper-dim);
+  /* The one dark moment on the page. A rule marks the seam rather than letting
+     two flat grounds collide. */
+  border-top: 1px solid var(--rule-strong);
+}
+
+.footer-main { padding-block: var(--s-8) var(--s-7); }
+@media (min-width: 64rem) { .footer-main { padding-block: var(--s-9) var(--s-8); } }
+
+.footer-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--s-7);
+}
+@media (min-width: 40rem) { .footer-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (min-width: 64rem) { .footer-grid { grid-template-columns: 1.6fr 1fr 1.2fr; gap: var(--s-8); } }
+
+.footer-wordmark .wordmark-name { color: var(--paper); font-size: 1.5rem; }
+.footer-wordmark .wordmark-sub { color: var(--paper-faint); }
+.footer-wordmark .wordmark-sub::after { background: var(--rule-on-ink-strong); }
+
+.footer-desc {
+  margin-block: var(--s-5) var(--s-5);
+  max-width: 34ch;
+  font-size: var(--step-0);
+  color: var(--paper-dim);
+}
+
+.footer-pills { display: flex; flex-wrap: wrap; gap: var(--s-2); }
+.footer-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4375rem;
+  padding: 0.4375rem 0.75rem;
+  border: 1px solid var(--rule-on-ink);
+  border-radius: var(--r-pill);
+  font-size: 0.75rem;
+  color: var(--paper-dim);
+}
+.footer-pill .ico { width: 0.875rem; height: 0.875rem; color: var(--paper-faint); }
+.footer-pill b { color: var(--paper); font-weight: 600; }
+
+.footer-heading {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  margin-bottom: var(--s-4);
+  padding-bottom: var(--s-3);
+  border-bottom: 1px solid var(--rule-on-ink);
+  font-family: var(--font-label);
+  font-variation-settings: 'wdth' 82;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--paper);
+}
+
+.hours-list { display: grid; gap: var(--s-1); font-size: var(--step-0); }
+.hours-row {
+  display: flex;
+  align-items: baseline;
+  gap: var(--s-3);
+  padding-block: 0.3125rem;
+}
+.hours-row dt { color: var(--paper-faint); white-space: nowrap; }
+.hours-row .leader { flex: 1; height: 0.55em; border-bottom: 1px dotted var(--rule-on-ink-strong); min-width: var(--s-4); }
+.hours-row dd { margin: 0; color: var(--paper); font-weight: 500; white-space: nowrap; }
+.hours-row.is-today dt, .hours-row.is-today dd { color: #fff; }
+.hours-row.is-today .leader { border-bottom-color: var(--tomato-light); }
+
+.footer-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4375rem;
+  margin-top: var(--s-4);
+  font-size: 0.8125rem;
+  color: var(--paper-dim);
+}
+
+.contact-list { display: grid; gap: var(--s-1); }
+.contact-row {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--s-3);
+  padding: var(--s-2) var(--s-2) var(--s-2) 0;
+  margin-left: calc(var(--s-2) * -1);
+  padding-left: var(--s-2);
+  border-radius: var(--r-md);
+  font-size: var(--step-0);
+  color: var(--paper-dim);
+  text-decoration: none;
+  transition: color var(--t-routine) var(--ease-out), background-color var(--t-routine) var(--ease-out);
+}
+.contact-row .ico { margin-top: 0.15rem; color: var(--paper-faint); transition: color var(--t-routine) var(--ease-out); }
+.contact-row:hover { color: #fff; background: var(--ink-panel); }
+.contact-row:hover .ico { color: var(--tomato-light); }
+
+.footer-bottom { border-top: 1px solid var(--rule-on-ink); }
+.footer-bottom-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-2);
+  padding-block: var(--s-5);
+  font-size: 0.8125rem;
+  color: var(--paper-faint);
+  text-align: center;
+}
+@media (min-width: 40rem) { .footer-bottom-inner { flex-direction: row; text-align: left; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .pizza-card:hover { transform: none; }
+  .pizza-card:hover .pizza-media img { transform: none; }
+  .nav-sheet { animation: none; }
+  .pizza-skeleton [class^='sk-'] { animation: none; }
+}

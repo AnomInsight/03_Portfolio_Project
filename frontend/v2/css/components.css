@@ -1,0 +1,293 @@
+/* ==========================================================================
+   Version B — controls
+   Every control ships rest / hover / active / focus-visible / disabled, and
+   the ones that can be chosen or can wait also ship selected and loading.
+   ========================================================================== */
+
+/* --- Buttons -------------------------------------------------------------- */
+
+.btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--s-2);
+  padding: 0.8125rem var(--s-5);
+  border-radius: var(--r-md);
+  font-family: var(--font-label);
+  font-variation-settings: 'wdth' 78;
+  font-weight: 600;
+  font-size: var(--step--1);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  white-space: nowrap;
+  border: 1px solid transparent;
+  transition:
+    background-color var(--t-routine) var(--ease-out),
+    border-color var(--t-routine) var(--ease-out),
+    color var(--t-routine) var(--ease-out),
+    box-shadow var(--t-routine) var(--ease-out),
+    transform var(--t-feedback) var(--ease-out);
+}
+
+.btn:active:not(:disabled) { transform: translateY(1px); }
+.btn:disabled { cursor: not-allowed; }
+
+.btn-primary {
+  background: var(--tomato);
+  color: #fff;
+  box-shadow: 0 1px 2px rgba(34, 26, 21, 0.14), 0 10px 24px -14px rgba(177, 30, 35, 0.9);
+}
+.btn-primary:hover:not(:disabled) { background: var(--tomato-hover); }
+.btn-primary:active:not(:disabled) { background: var(--tomato-press); box-shadow: 0 1px 2px rgba(34, 26, 21, 0.2); }
+.btn-primary:disabled { background: var(--paper-edge); color: var(--ink-faint); box-shadow: none; }
+
+/* The menu's per-card action. Outlined so seven of them in a grid read as a
+   row of options rather than a row of heavy black slabs. */
+.btn-outline {
+  background: transparent;
+  color: var(--tomato);
+  border-color: currentColor;
+}
+.btn-outline:hover:not(:disabled) { background: var(--tomato); color: #fff; border-color: var(--tomato); }
+.btn-outline:active:not(:disabled) { background: var(--tomato-press); border-color: var(--tomato-press); }
+.btn-outline:disabled { color: var(--ink-faint); border-color: var(--rule); }
+
+.btn-ink {
+  background: var(--ink);
+  color: var(--paper);
+}
+.btn-ink:hover:not(:disabled) { background: var(--ink-raise); }
+
+/* On the dark hero ground, over photography. */
+.btn-ghost-ink {
+  background: rgba(244, 237, 224, 0.06);
+  color: var(--paper);
+  border-color: var(--rule-on-ink-strong);
+  backdrop-filter: blur(6px);
+}
+.btn-ghost-ink:hover:not(:disabled) {
+  background: rgba(244, 237, 224, 0.13);
+  border-color: rgba(244, 237, 224, 0.5);
+}
+
+.btn-quiet {
+  background: transparent;
+  color: var(--ink-mute);
+  border-color: var(--rule);
+}
+.btn-quiet:hover:not(:disabled) { color: var(--ink); border-color: var(--rule-strong); background: var(--paper-deep); }
+
+.btn-block { display: flex; width: 100%; }
+.btn-lg { padding: 1.0625rem var(--s-6); font-size: var(--step-0); }
+
+/* Text-only action. Underline is the affordance, colour is the state. */
+.btn-text {
+  font-size: inherit;
+  color: var(--ink-mute);
+  padding: 0;
+  border-radius: var(--r-sm);
+  text-decoration: underline;
+  text-decoration-color: var(--rule-strong);
+  text-underline-offset: 0.25em;
+  transition: color var(--t-routine) var(--ease-out), text-decoration-color var(--t-routine) var(--ease-out);
+}
+.btn-text:hover { color: var(--tomato); text-decoration-color: currentColor; }
+
+/* --- Icon buttons --------------------------------------------------------- */
+
+.icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: var(--r-md);
+  color: var(--ink-mute);
+  transition: color var(--t-routine) var(--ease-out), background-color var(--t-routine) var(--ease-out);
+}
+.icon-btn:hover { color: var(--ink); background: var(--paper-deep); }
+.icon-btn:active { background: var(--paper-edge); }
+
+.icon-btn-on-ink { color: var(--paper-dim); }
+.icon-btn-on-ink:hover { color: var(--paper); background: rgba(244, 237, 224, 0.1); }
+
+.icon-btn-danger:hover { color: var(--tomato); background: var(--tomato-tint); }
+
+/* --- Ingredient tags (read-only) ------------------------------------------ */
+
+.tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.1875rem 0.5625rem;
+  border: 1px solid var(--rule);
+  border-radius: var(--r-pill);
+  font-size: 0.8125rem;
+  line-height: 1.45;
+  color: var(--ink-mute);
+  text-transform: lowercase;
+  white-space: nowrap;
+}
+
+.tag-included {
+  border-color: rgba(46, 82, 51, 0.3);
+  color: var(--basil);
+  background: rgba(46, 82, 51, 0.05);
+}
+
+/* --- Extra toggle ---------------------------------------------------------
+   A wrapping flex of real toggle buttons, so a long ingredient name can never
+   clip a fixed column and the last row is never left ragged by empty cells. */
+
+.extra {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-2);
+  padding: 0.5rem 0.875rem 0.5rem 0.625rem;
+  border: 1px solid var(--rule-strong);
+  border-radius: var(--r-pill);
+  background: var(--paper);
+  color: var(--ink-soft);
+  font-size: var(--step-0);
+  text-align: left;
+  transition:
+    border-color var(--t-routine) var(--ease-out),
+    background-color var(--t-routine) var(--ease-out),
+    color var(--t-routine) var(--ease-out),
+    transform var(--t-feedback) var(--ease-out);
+}
+.extra:hover { border-color: var(--ink-faint); background: var(--paper-deep); color: var(--ink); }
+.extra:active { transform: scale(0.97); }
+
+.extra[aria-pressed='true'] {
+  border-color: var(--tomato);
+  background: var(--tomato-tint);
+  color: var(--tomato-hover);
+}
+
+.extra-mark {
+  display: grid;
+  place-items: center;
+  width: 1.125rem;
+  height: 1.125rem;
+  flex: none;
+  border: 1px solid var(--rule-strong);
+  border-radius: var(--r-pill);
+  color: transparent;
+  transition:
+    background-color var(--t-feedback) var(--ease-out),
+    border-color var(--t-feedback) var(--ease-out),
+    color var(--t-feedback) var(--ease-out);
+}
+.extra-mark .ico { width: 0.75rem; height: 0.75rem; stroke-width: 2.4; }
+.extra[aria-pressed='true'] .extra-mark {
+  background: var(--tomato);
+  border-color: var(--tomato);
+  color: #fff;
+}
+
+/* --- Quantity stepper ----------------------------------------------------- */
+
+.stepper {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid var(--rule-strong);
+  border-radius: var(--r-pill);
+  overflow: hidden;
+  background: var(--paper);
+}
+.stepper button {
+  display: grid;
+  place-items: center;
+  width: 2rem;
+  height: 1.875rem;
+  color: var(--ink-soft);
+  transition: background-color var(--t-feedback) var(--ease-out), color var(--t-feedback) var(--ease-out);
+}
+.stepper button:hover { background: var(--paper-deep); color: var(--ink); }
+.stepper button:active { background: var(--paper-edge); }
+.stepper button .ico { width: 0.875rem; height: 0.875rem; stroke-width: 2.2; }
+.stepper-value {
+  min-width: 1.75rem;
+  text-align: center;
+  font-size: var(--step-0);
+  font-weight: 600;
+  border-inline: 1px solid var(--rule);
+  align-self: stretch;
+  display: grid;
+  place-items: center;
+}
+
+/* --- Text field ----------------------------------------------------------- */
+
+.field {
+  width: 100%;
+  padding: 0.6875rem 0.9375rem;
+  border: 1px solid var(--rule-strong);
+  border-radius: var(--r-md);
+  background: var(--paper);
+  font-size: var(--step-0);
+  transition: border-color var(--t-routine) var(--ease-out), box-shadow var(--t-routine) var(--ease-out);
+}
+.field::placeholder { color: var(--ink-mute); }
+.field:hover { border-color: var(--ink-faint); }
+.field:focus-visible {
+  outline: none;
+  border-color: var(--tomato);
+  box-shadow: 0 0 0 3px rgba(177, 30, 35, 0.16);
+}
+
+/* --- Status dot ----------------------------------------------------------- */
+
+.dot {
+  width: 0.4375rem;
+  height: 0.4375rem;
+  border-radius: var(--r-pill);
+  background: var(--basil);
+  flex: none;
+}
+.on-ink .dot { background: var(--basil-dot); }
+.dot-closed { background: var(--ink-faint); }
+
+/* --- Inline notice -------------------------------------------------------- */
+
+.notice {
+  display: flex;
+  gap: var(--s-3);
+  padding: var(--s-4);
+  border: 1px solid var(--rule);
+  border-radius: var(--r-md);
+  background: var(--paper-deep);
+  font-size: var(--step-0);
+  color: var(--ink-soft);
+}
+.notice-error {
+  border-color: rgba(177, 30, 35, 0.3);
+  background: var(--tomato-tint);
+  color: var(--tomato-hover);
+}
+.notice .ico { margin-top: 0.15rem; color: currentColor; }
+
+/* --- Reveal on scroll -----------------------------------------------------
+   Content is visible by default. The script adds `is-armed` only once it has
+   confirmed it can observe, so a failed script can never hide the page. */
+
+.reveal.is-armed {
+  opacity: 0;
+  transform: translateY(12px);
+}
+.reveal.is-armed.is-in {
+  opacity: 1;
+  transform: none;
+  transition:
+    opacity var(--t-overlay) var(--ease-out),
+    transform var(--t-overlay) var(--ease-out);
+  transition-delay: var(--reveal-delay, 0ms);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal.is-armed { transform: none; }
+  .reveal.is-armed.is-in { transition: opacity var(--t-routine) linear; }
+  .btn:active:not(:disabled),
+  .extra:active { transform: none; }
+}

@@ -37,6 +37,13 @@ if not api_key:
 RATE_LIMIT_COUNT = int(os.getenv("RATE_LIMIT_COUNT", "20"))
 RATE_LIMIT_WINDOW_SEC = int(os.getenv("RATE_LIMIT_WINDOW_SEC", "60"))
 
+# Completion budget for the chat model. See generate_llm_reply for why this is
+# not 300: the model is a reasoning model and its thinking is charged here too.
+MAX_COMPLETION_TOKENS = int(os.getenv("MAX_COMPLETION_TOKENS", "1200"))
+REASONING_EFFORT = os.getenv("REASONING_EFFORT", "low")
+# Total attempts per user message, including the first.
+EMPTY_REPLY_ATTEMPTS = int(os.getenv("EMPTY_REPLY_ATTEMPTS", "2"))
+
 ALLOWED_ORIGINS = os.getenv("ALLOWED_ORIGINS", "null,http://localhost:3000").split(",")
 
 
@@ -100,6 +107,15 @@ class OrderResponse(BaseModel):
     order_counts: dict[str, int]
 
 
+class PopularPizza(BaseModel):
+    pizza: str
+    rank: int
+
+
+class PopularityResponse(BaseModel):
+    ranked: list[PopularPizza]
+
+
 app = FastAPI(title="Pizza Chat Backend API", version="0.1.0")
 histories: dict[str, list[ChatMessage]] = defaultdict(list)
 request_log: dict[str, deque[datetime]] = defaultdict(deque)
@@ -140,6 +156,20 @@ SYSTEM_PROMPT = (
     f"Each extra ingredient costs ${EXTRA_INGREDIENT_PRICE:.2f}. "
     "Assume the website menu is visible. Do not repeat the full ingredients list unless the user explicitly asks for it. "
     "If the user seems lost, direct them to the Menu link in the navigation bar at the top center of the page. "
+    # The assistant is text-only: it has no tools, and no frontend code reads its
+    # replies for actions. Without these rules the model plays the "ordering
+    # assistant" role convincingly enough to answer "Your order is set", which
+    # leaves the customer believing they have ordered when nothing was added.
+    "You cannot operate the website for the customer. You have no access to the basket and no way to place, "
+    "change, confirm or cancel an order, and there is no checkout on this site. Never say or imply that you "
+    "have added something to the basket, or that an order is set, placed, confirmed or on its way. "
+    "What you do instead is help them decide and then tell them which control to use: the customise button on "
+    "the pizza's card in the Menu section opens a panel where extras are ticked, and 'Add to Order' in that "
+    "panel puts it in the basket; 'Your Order' at the top of the page reviews the basket; and the button at "
+    "the bottom of that panel hands the order to the kitchen through this chat. Give only the step they need "
+    "next, not the whole sequence, and never invent a control that is not described here. "
+    "Pricing a pizza with extras for them is useful and welcome \u2014 do it, but present the figure as what it "
+    "would come to, never as an order you have created. "
     "Always answer the user's actual question first, directly and specifically — never open with a generic "
     "'Welcome, what are you in the mood for?' unless the user's message really is just a greeting (e.g. 'hi', 'hello') "
     "with no other content. A follow-up question, if any, comes after the answer, not instead of it. "
@@ -207,7 +237,23 @@ def popularity_summary() -> str:
     return f"Order popularity so far (real counts, most-ordered first): {ranked_text}."
 
 
+class EmptyReplyError(RuntimeError):
+    """The provider answered, but with no usable assistant text."""
+
+
 def generate_llm_reply(session_id: str, user_text: str) -> str:
+    """Ask the model for a reply.
+
+    `openai/gpt-oss-20b` is a reasoning model: the tokens it spends thinking are
+    charged against the completion budget, before any visible text is produced.
+    The previous budget of 300 covered both, so a long reasoning trace consumed
+    the whole allowance and the call came back with `finish_reason="length"` and
+    empty content — or, worse, with a reply cut off mid-sentence that nothing
+    here noticed. Measured traces ran to ~1,260 characters on their own.
+
+    Raises EmptyReplyError when the provider returns no usable text, so the
+    caller can decide what to do instead of passing an apology off as an answer.
+    """
     # Menu core is always included so the bot never hallucinates pizza/ingredient names.
     system_content = f"{SYSTEM_PROMPT}\n{MENU_CORE}\n{popularity_summary()}"
 
@@ -222,9 +268,41 @@ def generate_llm_reply(session_id: str, user_text: str) -> str:
         model="openai/gpt-oss-20b",
         messages=messages,
         temperature=0.4,
-        max_tokens=300,
+        # Reasoning + visible answer share this budget. Sized from measurement:
+        # the worst case observed was 365 tokens, so this leaves ~3x headroom
+        # and is still a small fraction of the model's 65,536 ceiling. It does
+        # not make answers longer — SYSTEM_PROMPT already asks for concision.
+        max_completion_tokens=MAX_COMPLETION_TOKENS,
+        # Keeps the reasoning trace short. Measured across 15 calls: peak
+        # completion tokens 318 -> 181, average 194 -> 75, with no loss of
+        # answer quality for questions this narrow.
+        reasoning_effort=REASONING_EFFORT,
     )
-    return resp.choices[0].message.content or "I'm sorry, I couldn't generate a response."
+
+    choice = resp.choices[0]
+    text = (choice.message.content or "").strip()
+
+    if not text:
+        raise EmptyReplyError(f"empty content (finish_reason={choice.finish_reason})")
+
+    return text
+
+
+def reply_with_retry(session_id: str, user_text: str) -> str:
+    """Retry an empty reply a bounded number of times before giving up.
+
+    Raising the token budget removed this failure in every test run, so the
+    retry is a safety net for the rare case, not the primary fix.
+    """
+    last_error: Exception | None = None
+
+    for _ in range(EMPTY_REPLY_ATTEMPTS):
+        try:
+            return generate_llm_reply(session_id, user_text)
+        except EmptyReplyError as exc:
+            last_error = exc
+
+    raise last_error if last_error else EmptyReplyError("no attempts made")
 
 
 @app.get("/health")
@@ -249,14 +327,23 @@ def client_key():
 )
 def chat(request: ChatRequest, include_history: bool = Query(DEFAULT_INCLUDE_HISTORY)):
     session_id = request.session_id or str(uuid.uuid4())
-    user_message = ChatMessage(role="user", text=request.message)
-    histories[session_id].append(user_message)
 
+    # The user turn is NOT written to history before the call. If it were, a
+    # failed exchange would leave a user message with no answer, and the client
+    # retrying that message would append it a second time — the model would then
+    # see the question twice. Both turns are committed together, only on success,
+    # which makes a retry of the same message idempotent.
     try:
-        reply_text = generate_llm_reply(session_id, request.message)
+        reply_text = reply_with_retry(session_id, request.message)
+    except EmptyReplyError:
+        raise HTTPException(
+            status_code=503,
+            detail="The assistant didn't manage a reply that time. Please try again.",
+        )
     except Exception:
         raise HTTPException(status_code=502, detail="Upstream LLM provider error")
 
+    histories[session_id].append(ChatMessage(role="user", text=request.message))
     assistant_message = ChatMessage(role="assistant", text=reply_text)
     histories[session_id].append(assistant_message)
 
@@ -294,6 +381,26 @@ def place_order(request: OrderRequest):
     save_order_counts(order_counts)
 
     return OrderResponse(order_counts=order_counts)
+
+
+@app.get("/order-counts", response_model=PopularityResponse)
+def order_popularity():
+    """Which pizzas are ordered most, ranked — deliberately without the counts.
+
+    SYSTEM_PROMPT already forbids the assistant from stating or implying real
+    order numbers, so this endpoint holds the same line: it publishes the
+    ordering, never the volume. Pizzas nobody has ordered are omitted, so an
+    empty list means "no data yet" and the menu simply shows no badge rather
+    than crowning an arbitrary pizza.
+
+    Ties keep menu order: the sort is stable and PIZZA_NAMES is the menu's own
+    sequence, so the same pizza wins a tie on every request.
+    """
+    scored = [(name, order_counts.get(name, 0)) for name in PIZZA_NAMES]
+    ordered = [name for name, count in sorted(scored, key=lambda kv: -kv[1]) if count > 0]
+    return PopularityResponse(
+        ranked=[PopularPizza(pizza=name, rank=i + 1) for i, name in enumerate(ordered)]
+    )
 
 
 @app.get("/shop-info")

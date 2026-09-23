@@ -85,3 +85,33 @@ def test_rate_limit(monkeypatch):
     assert r1.status_code == 200
     assert r2.status_code == 429
     assert r2.json()["detail"] == "Too many requests"
+
+
+def test_order_counts_ranks_without_exposing_numbers(monkeypatch):
+    """The menu badge needs the ordering; it must not leak sales volume."""
+    monkeypatch.setattr(
+        api, "order_counts", {api.PIZZA_NAMES[2]: 9, api.PIZZA_NAMES[0]: 4}
+    )
+
+    r = client.get("/order-counts")
+
+    assert r.status_code == 200
+    body = r.json()
+    # Only ordered pizzas appear, most-ordered first.
+    assert [item["pizza"] for item in body["ranked"]] == [
+        api.PIZZA_NAMES[2],
+        api.PIZZA_NAMES[0],
+    ]
+    assert [item["rank"] for item in body["ranked"]] == [1, 2]
+    # No count, under any key, anywhere in the payload.
+    assert "9" not in r.text and "count" not in r.text.lower()
+
+
+def test_order_counts_empty_when_nothing_ordered(monkeypatch):
+    """No orders must mean no badge, not an arbitrarily crowned pizza."""
+    monkeypatch.setattr(api, "order_counts", {})
+
+    r = client.get("/order-counts")
+
+    assert r.status_code == 200
+    assert r.json() == {"ranked": []}
