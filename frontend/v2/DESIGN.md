@@ -48,15 +48,13 @@ hue, never grey.
 
 **Type** — two families, three roles.
 
-- `--font-display` **Bodoni Moda** (variable, `opsz`) — the food's voice: h1, section headings,
-  dish names, the order total. Bodoni is the face of Italian printing and of the food packaging
-  this world is drawn from.
+- `--font-display` **Fraunces** (variable, `opsz`, `SOFT 50`) — the food's voice: h1, section
+  headings, dish names, the order total. A warm old-style serif with the soft, inked edge of a
+  letterpress menu. Weight 600 throughout, `font-optical-sizing: auto`, leading `1.1` on headings.
 
-  A didone's hairlines are the risk. Three things keep them solid on a standard-density screen:
-  `font-optical-sizing: auto` (the low-opsz masters are drawn with thicker hairlines), weight
-  **700 rather than 600 below ~2rem**, and **no `-webkit-font-smoothing: antialiased`** — grayscale
-  antialiasing thins every stroke and is what breaks a didone at 20px. Leading is `1.14`; tighter
-  and Bodoni's long descenders collide on a wrapped heading.
+  Replaced Bodoni Moda (2026-09-24) at the user's request: even with optical sizing and weight 700,
+  the didone read as cold and fragile at dish-name sizes. Fraunces' moderate contrast holds at 20px
+  without a weight bump. Still **no `-webkit-font-smoothing: antialiased`**.
 - `--font-label` **Archivo** at `wdth: 78` — the house voice: wordmark, section labels, prices,
   button text. Always uppercase, `letter-spacing: .14em`.
 - `--font-text` **Archivo** at normal width — everything operational: body copy, form controls,

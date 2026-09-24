@@ -20,7 +20,7 @@ body {
   font-size: var(--step-1);
   line-height: 1.65;
   /* Deliberately NOT -webkit-font-smoothing: antialiased. Grayscale AA thins
-     strokes, which breaks Bodoni's hairlines at small sizes on standard-density
+     strokes, which breaks thin serif strokes at small sizes on standard-density
      screens. Subpixel rendering keeps them solid. */
   font-synthesis-weight: none;
   overflow-x: hidden;
@@ -67,13 +67,13 @@ a {
 
 .t-display {
   font-family: var(--font-display);
-  /* Bodoni's stroke contrast is optical-size dependent; letting the browser
-     drive the opsz axis keeps hairlines solid at dish-name sizes and crisp at
-     display sizes. */
+  /* Fraunces' opsz axis tightens and sharpens at display sizes; letting the
+     browser drive it keeps small sizes sturdy and large sizes refined. */
   font-optical-sizing: auto;
+  font-variation-settings: 'SOFT' 50; /* rounded terminals: inked, not engraved */
   font-weight: 600;
-  line-height: 1.14; /* Bodoni has long descenders; tighter than this collides */
-  letter-spacing: -0.012em; /* a didone needs less negative tracking than a sans */
+  line-height: 1.1;
+  letter-spacing: -0.015em;
   /* Headings break into even lines instead of leaving a word stranded. */
   text-wrap: balance;
 }
@@ -85,11 +85,9 @@ a {
 .cart-total-row dd, .sheet-total-value, .story-stamp span:last-child {
   font-family: var(--font-display);
   font-optical-sizing: auto;
-  /* 700 rather than the display weight of 600: below about 2rem the 600 master's
-     hairlines drop under a physical pixel on a 1x screen and start to break up. */
-  font-weight: 700;
-  /* A didone set small wants loosening, not tightening. */
-  letter-spacing: 0.004em;
+  font-variation-settings: 'SOFT' 50;
+  font-weight: 600;
+  letter-spacing: 0;
   line-height: 1.2;
 }
 

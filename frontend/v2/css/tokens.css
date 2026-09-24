@@ -41,10 +41,10 @@
   --rule-on-ink-strong: rgba(244, 237, 224, 0.26);
 
   /* --- Type ------------------------------------------------------------- */
-  /* Bodoni: the face of Italian printing and of the food packaging this world
-     is drawn from. Optical sizing is left to the browser so the hairlines
-     thicken at dish-name sizes instead of breaking up. */
-  --font-display: 'Bodoni Moda', 'Didot', 'Bodoni MT', Georgia, serif;
+  /* Fraunces: a warm old-style serif with the soft, inked edge of letterpress
+     menus. Its optical-size axis keeps strokes solid at dish-name sizes, where
+     a didone's hairlines broke up. */
+  --font-display: 'Fraunces', 'Iowan Old Style', Georgia, serif;
   --font-label:   'Archivo', 'Helvetica Neue', Arial, sans-serif;
   --font-text:    'Archivo', system-ui, -apple-system, 'Segoe UI', sans-serif;
 
